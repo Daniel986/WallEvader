@@ -46,8 +46,9 @@ public class GameView extends SurfaceView implements Runnable {
     private boolean firstRun = true;
     private boolean changedXs = false;
     private boolean isGameOver = false;
+    private boolean isAfterLastScreen = false;
 
-    private int score = 200;
+    private int score = 0;
 
     private Context context;
 
@@ -82,13 +83,12 @@ public class GameView extends SurfaceView implements Runnable {
         boom = new Boom(context);
 
         sensorManager = (SensorManager) context.getSystemService(SENSOR_SERVICE);
-        gyroscopeSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR);
+        gyroscopeSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
         gyroscopeEventListener = new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent sensorEvent) {
-                player.setSpeedX(sensorEvent.values[1]); // TODO return this shyte
-                //player.setSpeedX(0.03f);
+                player.setSpeedX(sensorEvent.values[0]); // TODO return this shyte
             }
 
             @Override
@@ -223,13 +223,10 @@ public class GameView extends SurfaceView implements Runnable {
 //                        e.printStackTrace();
 //                    }
 
-                    //isGameOver = true;
+                    isGameOver = true;
 
                     // TODO : change intent
 
-                    Intent intent = new Intent(context, MainActivity.class);
-                    intent.putExtra("score", score);
-                    context.startActivity(intent);
                 }
 //                else if (player.getDetectCollision().bottom >  enemies[j][i].getDetectCollision().top) {
 //
@@ -274,6 +271,17 @@ public class GameView extends SurfaceView implements Runnable {
     }
 
     private void draw() {
+        if(isAfterLastScreen && isGameOver) {
+            try {
+                gameThread.sleep(1000);
+                Intent intent = new Intent(context, MainActivity.class);
+                intent.putExtra("score", score);
+                context.startActivity(intent);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
         if (surfaceHolder.getSurface().isValid()) {
             canvas = surfaceHolder.lockCanvas();
 
@@ -312,23 +320,18 @@ public class GameView extends SurfaceView implements Runnable {
 
             paint.setColor(getResources().getColor(R.color.reddish));
             paint.setTextSize(80);
-            canvas.drawText("" + score, maxX * 0.1f, maxY * 5 / 6, paint);
+            canvas.drawText(Integer.toString(score), maxX * 0.1f, maxY * 5 / 6, paint);
 
 
             //draw game Over when the game is over
             if (isGameOver) {
-                canvas.drawColor(getResources().getColor(R.color.reddish));
+                //paint.setColor(getResources().getColor(R.color.mustard));
                 paint.setTextSize(150);
                 paint.setTextAlign(Paint.Align.CENTER);
 
                 int yPos = (int) ((canvas.getHeight() / 2) - ((paint.descent() + paint.ascent()) / 2));
                 canvas.drawText("Game Over", canvas.getWidth() / 2, yPos, paint);
-
-                try {
-                    gameThread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                isAfterLastScreen = true;
             }
 
             surfaceHolder.unlockCanvasAndPost(canvas);
@@ -336,18 +339,19 @@ public class GameView extends SurfaceView implements Runnable {
         }
     }
 
+    // make game 60fps
     private void control() {
         try {
             gameThread.sleep(17);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        // TODO : add gyro sensors to control player movement
     }
 
     public void pause() {
         playing = false;
         gameOnSound.stop();
+        sensorManager.unregisterListener(gyroscopeEventListener);
         try {
             gameThread.join();
         } catch (InterruptedException e) {
@@ -356,6 +360,7 @@ public class GameView extends SurfaceView implements Runnable {
 
     public void resume() {
         playing = true;
+        sensorManager.registerListener(gyroscopeEventListener, gyroscopeSensor, SensorManager.SENSOR_DELAY_GAME);
         gameOnSound.start();
         gameThread = new Thread(this);
         gameThread.start();

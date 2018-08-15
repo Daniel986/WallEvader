@@ -77,19 +77,31 @@ public class Player {
     }
 
     public void setSpeedX(float acceleration) {
-        if(acceleration > 0.01) {
-            if (acceleration <= 0.02)
-                this.speedX += 1;
-            else if(acceleration > 0.02)
-                this.speedX += 2;
-        }
-        else if (acceleration < -0.01){
-            if (acceleration >= -0.02)
-                this.speedX -= 1;
-            else if(acceleration < -0.02)
-                this.speedX -= 2;
-        }
+//        if(acceleration > 0.01) {
+//            if (acceleration <= 0.02)
+//                this.speedX += 1;
+//            else if(acceleration > 0.02)
+//                this.speedX += 2;
+//        }
+//        else if (acceleration < -0.01){
+//            if (acceleration >= -0.02)
+//                this.speedX -= 1;
+//            else if(acceleration < -0.02)
+//                this.speedX -= 2;
+//        }
+//        else
+//            this.speedX = 0;
+        if(acceleration >= 1 || acceleration <= -1)
+            this.speedX -= acceleration;
         else
             this.speedX = 0;
+
+        //float xS = (this.speedX / 2) * frameTime;
+
+        //x -= xS;
+
+
     }
+
+
 }

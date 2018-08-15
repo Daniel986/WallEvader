@@ -3,10 +3,10 @@ package roma.wallevader;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -27,21 +27,21 @@ public class topScore extends AppCompatActivity {
     DatabaseReference myRef;
     static String[] scores1;
     private int newScore;
+    private boolean flag = false;
+    private boolean isUpdated = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_top_score);
+
         firstPlace = findViewById(R.id.editText1);
         secPlace = findViewById(R.id.editText2);
         thrdPlace = findViewById(R.id.editText3);
         fourthPlace = findViewById(R.id.editText4);
         fifthPlace = findViewById(R.id.editText5);
+
         back = findViewById(R.id.btnBack);
-//
-
-
-        //checkNewScore(newScore,scores1);
 
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,20 +52,14 @@ public class topScore extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("Top 5 places");
 
-        //writeToDatabase();
-        //while(scores1 == null)
-            readFromDatabase();
 
         Bundle extrasBundle = this.getIntent().getExtras();
         if(this.getIntent().hasExtra("score"))
             newScore = extrasBundle.getInt("score");
 
-        //while(scores1 == null);
-        //updateScoreBoard();
-        if(newScore != 0 && scores1 != null && checkNewScore(newScore,scores1)) {
-            //writeToDatabase(scores1);
-            updateScoreBoard();
-        }
+        //resetValues();
+
+        readFromDatabase();
 
 
     }
@@ -115,9 +109,15 @@ public class topScore extends AppCompatActivity {
 
     public void writeToDatabase(String[] scores) {
         // Write a message to the database
-        String tmp = String.join(":", scores);
+        String tmp = TextUtils.join(":", scores);
         myRef.setValue(tmp);
         //myRef.setValue("100:90:80:70:60");
+    }
+
+    public void resetValues() {
+        // Write a message to the database
+        //myRef.setValue(tmp);
+        myRef.setValue("0:0:0:0:0");
     }
 
     public void readFromDatabase() {
@@ -128,9 +128,14 @@ public class topScore extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String value = dataSnapshot.getValue(String.class);
-                Log.d("logger", "Value is: " + value);
+                //Log.d("logger", "Value is: " + value);
                 String[] scores = value.split(":");
                 scores1 = scores;
+                flag = true;
+                if(newScore != 0 && !isUpdated) {
+                    checkNewScore(newScore, scores1);
+                    isUpdated = true;
+                }
                 updateScoreBoard();
             }
 
