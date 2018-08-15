@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "519033608806",
+    "firebase_url": "https://wallevader-d0d45.firebaseio.com",
+    "project_id": "wallevader-d0d45",
+    "storage_bucket": "wallevader-d0d45.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:519033608806:android:160924a47d24d2ee",
+        "android_client_info": {
+          "package_name": "roma.wallevader"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "519033608806-vqec4deh5vje15uah97ceetr4ds9ig07.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "roma.wallevader",
+            "certificate_hash": "b0c70e4b3efc0c0af1a0db85f94fa1a03a288465"
+          }
+        },
+        {
+          "client_id": "519033608806-mpg8g4vfodr0p51ji0mlultbu134h4k0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDM6wrDZib46Kz6oOeDG7nqoiENVBs9eYY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "519033608806-mpg8g4vfodr0p51ji0mlultbu134h4k0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

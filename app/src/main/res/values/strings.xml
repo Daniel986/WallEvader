@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Wall Evader</string>
+    <string name="title_activity_top_score">topScore</string>
+</resources>
