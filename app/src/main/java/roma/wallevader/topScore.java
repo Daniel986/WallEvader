@@ -23,12 +23,10 @@ public class topScore extends AppCompatActivity {
     private TextView thrdPlace;
     private TextView fourthPlace;
     private TextView fifthPlace;
-    FirebaseDatabase database;
-    DatabaseReference myRef;
-    static String[] scores1;
-    private int newScore;
-    private boolean flag = false;
-    private boolean isUpdated = false;
+    private String[] scores;
+//    private int newScore;
+//    private boolean flag = false;
+//    private boolean isUpdated = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,102 +47,106 @@ public class topScore extends AppCompatActivity {
                 startActivity(new Intent(topScore.this, MainActivity.class));
             }
         });
-        database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("Top 5 places");
+//        database = FirebaseDatabase.getInstance();
+//        myRef = database.getReference("Top 5 places");
 
 
         Bundle extrasBundle = this.getIntent().getExtras();
         if(this.getIntent().hasExtra("score"))
-            newScore = extrasBundle.getInt("score");
+            scores = extrasBundle.getStringArray("score");
+            //newScore = extrasBundle.getInt("score");
+
 
         //resetValues();
 
-        readFromDatabase();
+        //readFromDatabase();
+
+        updateScoreBoard();
 
 
     }
 
-    public boolean checkNewScore(int newScore,String[] scores) {
-
-        if (newScore > Integer.valueOf(scores[4])) {
-            if (newScore > Integer.valueOf(scores[3])) {
-                if (newScore > Integer.valueOf(scores[2])) {
-                    if (newScore > Integer.valueOf(scores[1])) {
-                        if (newScore > Integer.valueOf(scores[0])) {
-                            scores[4] = scores[3];
-                            scores[3] = scores[2];
-                            scores[2] = scores[1];
-                            scores[1] = scores[0];
-                            scores[0] = String.valueOf(newScore);
-                        } else {
-                            scores[4] = scores[3];
-                            scores[3] = scores[2];
-                            scores[2] = scores[1];
-                            scores[1] = String.valueOf(newScore);
-                        }
-                    } else {
-                        scores[4] = scores[3];
-                        scores[3] = scores[2];
-                        scores[2] = String.valueOf(newScore);
-                    }
-                } else {
-                    scores[4] = scores[3];
-                    scores[3] = String.valueOf(newScore);
-                }
-            } else {
-                scores[4] = String.valueOf(newScore);
-            }
-            writeToDatabase(scores);
-            return true;
-        } else return false;
-    }
+//    public boolean checkNewScore(int newScore,String[] scores) {
+//
+//        if (newScore > Integer.valueOf(scores[4])) {
+//            if (newScore > Integer.valueOf(scores[3])) {
+//                if (newScore > Integer.valueOf(scores[2])) {
+//                    if (newScore > Integer.valueOf(scores[1])) {
+//                        if (newScore > Integer.valueOf(scores[0])) {
+//                            scores[4] = scores[3];
+//                            scores[3] = scores[2];
+//                            scores[2] = scores[1];
+//                            scores[1] = scores[0];
+//                            scores[0] = String.valueOf(newScore);
+//                        } else {
+//                            scores[4] = scores[3];
+//                            scores[3] = scores[2];
+//                            scores[2] = scores[1];
+//                            scores[1] = String.valueOf(newScore);
+//                        }
+//                    } else {
+//                        scores[4] = scores[3];
+//                        scores[3] = scores[2];
+//                        scores[2] = String.valueOf(newScore);
+//                    }
+//                } else {
+//                    scores[4] = scores[3];
+//                    scores[3] = String.valueOf(newScore);
+//                }
+//            } else {
+//                scores[4] = String.valueOf(newScore);
+//            }
+//            writeToDatabase(scores);
+//            return true;
+//        } else return false;
+//    }
 
     public void updateScoreBoard() {
-        firstPlace.setText("1. "+scores1[0] + " Points");
-        secPlace.setText("2. "+scores1[1] + " Points");
-        thrdPlace.setText("3. "+scores1[2] + " Points");
-        fourthPlace.setText("4. "+scores1[3] + " Points");
-        fifthPlace.setText("5. "+scores1[4] + " Points");
+        firstPlace.setText("1. "+scores[0] + " Points");
+        secPlace.setText("2. "+scores[1] + " Points");
+        thrdPlace.setText("3. "+scores[2] + " Points");
+        fourthPlace.setText("4. "+scores[3] + " Points");
+        fifthPlace.setText("5. "+scores[4] + " Points");
     }
 
-    public void writeToDatabase(String[] scores) {
-        // Write a message to the database
-        String tmp = TextUtils.join(":", scores);
-        myRef.setValue(tmp);
-        //myRef.setValue("100:90:80:70:60");
-    }
-
-    public void resetValues() {
-        // Write a message to the database
-        //myRef.setValue(tmp);
-        myRef.setValue("0:0:0:0:0");
-    }
-
-    public void readFromDatabase() {
-
-        // Read from the database
-        myRef.addValueEventListener(new ValueEventListener() {
-
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String value = dataSnapshot.getValue(String.class);
-                //Log.d("logger", "Value is: " + value);
-                String[] scores = value.split(":");
-                scores1 = scores;
-                flag = true;
-                if(newScore != 0 && !isUpdated) {
-                    checkNewScore(newScore, scores1);
-                    isUpdated = true;
-                }
-                updateScoreBoard();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w("logger", "Failed to read value.", error.toException());
-            }
-        });
-
-    }
+//    public void writeToDatabase(String[] scores) {
+//        // Write a message to the database
+//        String tmp = TextUtils.join(":", scores);
+//        myRef.setValue(tmp);
+//        //myRef.setValue("100:90:80:70:60");
+//    }
+//
+//    public void resetValues() {
+//        // Write a message to the database
+//        //myRef.setValue(tmp);
+//        myRef.setValue("0:0:0:0:0");
+//    }
+//
+//    public void readFromDatabase() {
+//
+//        // Read from the database
+//        myRef.addValueEventListener(new ValueEventListener() {
+//
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                String value = dataSnapshot.getValue(String.class);
+//                //Log.d("logger", "Value is: " + value);
+//                String[] scores = value.split(":");
+//                scores1 = scores;
+//                flag = true;
+//                if(newScore != 0 && !isUpdated) {
+//                    checkNewScore(newScore, scores1);
+//                    isUpdated = true;
+//                }
+//                updateScoreBoard();
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError error) {
+//                // Failed to read value
+//                Log.w("logger", "Failed to read value.", error.toException());
+//            }
+//        });
+//
+//    }
 }
