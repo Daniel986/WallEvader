@@ -76,7 +76,7 @@ public class GameView extends SurfaceView implements Runnable {
 
         maxSpaceStart = maxX / 5;
         while(maxSpaceStart <= player.getBitmap().getWidth())
-            maxSpaceStart += maxX / 5 + player.getBitmap().getWidth() / 4;
+            maxSpaceStart += player.getBitmap().getWidth() / 3;
 
         maxSpaceEnd = maxX / 3;
 
