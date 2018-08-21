@@ -92,7 +92,7 @@ public class Player {
 //        else
 //            this.speedX = 0;
         if(acceleration >= 1 || acceleration <= -1)
-            this.speedX -= acceleration;
+            this.speedX -= acceleration*1.25;
         else
             this.speedX = 0;
 

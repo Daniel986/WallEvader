@@ -27,7 +27,7 @@ public class Enemy {
         maxX = screenX;
         maxY = screenY;
         minX = 0;
-        speed = 20;
+        speed = 15;
         y = 0;
 
         if (spacex < 0 )

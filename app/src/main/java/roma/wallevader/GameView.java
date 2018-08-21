@@ -42,11 +42,13 @@ public class GameView extends SurfaceView implements Runnable {
 
     private int maxY, maxX;
     private int x, dx, x2, dx2 = 0;
+    private int maxSpaceStart, maxSpaceEnd;
 
     private boolean firstRun = true;
     private boolean changedXs = false;
     private boolean isGameOver = false;
     private boolean isAfterLastScreen = false;
+    private boolean scored = false;
 
     private int score = 0;
 
@@ -69,7 +71,14 @@ public class GameView extends SurfaceView implements Runnable {
         maxY = screenY;
         maxX = screenX;
 
+
         player = new Player(context, screenX, screenY);
+
+        maxSpaceStart = maxX / 5;
+        while(maxSpaceStart <= player.getBitmap().getWidth())
+            maxSpaceStart += maxX / 5 + player.getBitmap().getWidth() / 4;
+
+        maxSpaceEnd = maxX / 3;
 
         surfaceHolder = getHolder();
         paint = new Paint();
@@ -116,8 +125,8 @@ public class GameView extends SurfaceView implements Runnable {
         player.update();
 
         //setting boom outside the screen
-        boom.setX(-250);
-        boom.setY(-250);
+        //boom.setX(-550);
+        //boom.setY(-550);
 
         if (!stars.isEmpty())
             //synchronized (stars) {
@@ -149,8 +158,9 @@ public class GameView extends SurfaceView implements Runnable {
         for (int j = 0; j < createdRowsCount + 1; j++) {
 
 
-            if (enemies[j][0].getY() >= maxY * 2 / 3 && enemies[j][0].getY() <= maxY * 2 / 3 + 22) { // regular scores
+            if (!scored && enemies[j][0].getY() >= maxY * 2 / 3 && enemies[j][0].getY() <= maxY * 2 / 3 + 10) { // regular scores
                 score += 50;
+                scored = true;
                 //Log.d("SCORE", "score: " + score + ", row: " + j + ", enemy Y: " + enemies[j][0].getY());
             }
 
@@ -162,24 +172,24 @@ public class GameView extends SurfaceView implements Runnable {
                 Random generator = new Random();
                 spaceCount = generator.nextInt(2) + 1; // randomize num of spaces
                 if (spaceCount == 1) {
-                    dx = generator.nextInt(300 - 100) + 200; // width of space (200 - 399 px) // TODO : init star in the middle of x and dx - ((x+dx)/2)
+                    dx = generator.nextInt(maxSpaceEnd) + maxSpaceStart; // width of space (200 - 399 px) // TODO : init star in the middle of x and dx - ((x+dx)/2)
                     x = generator.nextInt(maxX - dx); // placement of space
                     if (generator.nextInt(2) == 1) { // randomize the chance of a star to appear
-                        stars.add(new Star(context, x + generator.nextInt(200)));
+                        stars.add(new Star(context, x + generator.nextInt(maxSpaceStart)));
                     }
                 } else {
-                    dx = generator.nextInt(300 - 100) + 200;
+                    dx = generator.nextInt(maxSpaceEnd) + maxSpaceStart;
                     x = generator.nextInt(maxX / 2) - dx;
-                    dx2 = generator.nextInt(300 - 100) + 200;
+                    dx2 = generator.nextInt(maxSpaceEnd) + maxSpaceStart;
                     while (x2 < x + dx + 100) // assure sensible spacing
                         x2 = (generator.nextInt(maxX / 2) + maxX / 2) - dx2;
 
                     int starplacement = generator.nextInt(3); // randomize the chance of a star to appear
                     if (starplacement > 0) {
                         if (starplacement == 1)
-                            stars.add(new Star(context, x + generator.nextInt(200)));
+                            stars.add(new Star(context, x + generator.nextInt(maxSpaceStart)));
                         else
-                            stars.add(new Star(context, x2 + generator.nextInt(200)));
+                            stars.add(new Star(context, x2 + generator.nextInt(maxSpaceStart)));
                     }
                 }
                 changedXs = true;
@@ -237,6 +247,7 @@ public class GameView extends SurfaceView implements Runnable {
             }
         }
         changedXs = false;
+        scored = false;
     }
 
     private void initNewRow(int j) {
@@ -248,15 +259,15 @@ public class GameView extends SurfaceView implements Runnable {
         spaceCount = generator.nextInt(2 - 1) + 1;
         //spaceCount = 2;
         if (spaceCount == 1) {
-            dx = generator.nextInt(300 - 200) + 200; // width of space (300 - 400 px)
+            dx = generator.nextInt(maxSpaceEnd) + maxSpaceStart; // width of space (300 - 400 px)
             x = generator.nextInt(maxX - dx); // placement of space
             for (int i = 0; i < enemyCount; i++) {
                 enemies[j][i] = new Enemy(maxX, maxY, x, x + dx, spaceCount, i);
             }
         } else {
-            dx = generator.nextInt(300 - 200) + 200; // width of space (300 - 400 px)
+            dx = generator.nextInt(maxSpaceEnd) + maxSpaceStart; // width of space (300 - 400 px)
             x = generator.nextInt(maxX / 2) - dx; // placement of space
-            dx2 = generator.nextInt(300 - 200) + 200; // width of space (300 - 400 px)
+            dx2 = generator.nextInt(maxSpaceEnd) + maxSpaceStart; // width of space (300 - 400 px)
             while (x2 < x + dx + 100) // assure sensible spacing
                 x2 = (generator.nextInt(maxX / 2) + maxX / 2) - dx2; // placement of space
             for (int i = 0; i < enemyCount; i++) {

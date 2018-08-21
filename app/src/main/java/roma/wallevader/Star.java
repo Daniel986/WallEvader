@@ -9,7 +9,7 @@ import android.graphics.Rect;
 public class Star {
     private int x;
     private int y;
-    private int speed = 20;
+    private int speed = 15;
     private Bitmap bitmap;
 
     private Rect detectCollision;
